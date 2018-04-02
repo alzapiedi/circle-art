@@ -1,13 +1,56 @@
 const CANVAS_WIDTH = 1200;
 const CANVAS_HEIGHT = 900;
+let F = 50;
 
 const canvas = document.getElementById('canvas');
 canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
 const ctx = canvas.getContext('2d');
 
-const circles = [];
+let circles = [];
 const intervals = [];
+
+document.addEventListener('DOMContentLoaded', () => {
+  setupForms();
+});
+
+function setupForms() {
+  const r1 = document.getElementById('r1');
+  const r2 = document.getElementById('r2');
+  const v1 = document.getElementById('v1');
+  const v2 = document.getElementById('v2');
+  const f = document.getElementById('f');
+  r1.value = 400;
+  r2.value = 225;
+  v1.value = 260;
+  v2.value = 100;
+  f.value = 50;
+  r1.onchange = event => {
+    stop();
+    clear();
+    circles[0].r = Number(event.target.value);
+  }
+  r2.onchange = event => {
+    stop();
+    clear();
+    circles[1].r = Number(event.target.value);
+  }
+  v1.onchange = event => {
+    stop();
+    clear();
+    circles[0].v = Math.PI / Number(event.target.value);
+  }
+  v2.onchange = event => {
+    stop();
+    clear();
+    circles[1].v = Math.PI / Number(event.target.value);
+  }
+  f.onchange = event => {
+    stop();
+    clear();
+    F = Number(event.target.value);
+  }
+}
 
 function clear() {
   ctx.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT)
@@ -46,7 +89,7 @@ function start () {
     ctx.moveTo(circles[0].x, circles[0].y);
     ctx.lineTo(circles[1].x, circles[1].y);
     ctx.stroke();
-  }, 30));
+  }, 1000 / F));
 }
 
 start();
