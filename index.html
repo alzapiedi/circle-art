@@ -2,19 +2,41 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title></title>
+    <title>Circle Art</title>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <div><label>r1 = <input id="r1" type="text"></input></label></div>
-    <div><label>v1 = π / <input id="v1" type="text"></input></label></div>
-    <div><label>r2 = <input id="r2" type="text"></input></label></div>
-    <div><label>v2 = π / <input id="v2" type="text"></input></label></div>
-    <div><label>F = <input id="f" type="text"></input></label></div>
-    <div>
-      <button onclick="start()">Start</button>
-      <button onclick="stop()">Stop</button>
-    </div>
+    <section class="controls">
+      <div class="row">
+        <h2>Canvas Size</h2>
+        <div class="input_group">
+          <div class="input"><label>Pixels</label><input id="pixels" type="text"></input></div>
+        </div>
+      </div>
+      <div class="row">
+        <h2>Orbit 1</h2>
+        <div class="input_group">
+          <div class="input"><label>Radius</label><input id="r1" type="text"></input></div>
+          <div class="input"><label>Steps</label><input id="v1" type="text"></input></div>
+        </div>
+      </div>
+      <div class="row">
+        <h2>Orbit 2</h2>
+        <div class="input_group">
+          <div class="input"><label>Radius</label><input id="r2" type="text"></input></div>
+          <div class="input"><label>Steps</label><input id="v2" type="text"></input></div>
+        </div>
+      </div>
+      <div class="buttons">
+        <button class="start" onclick="start()">Start</button>
+        <button class="stop" onclick="stop()">Stop</button>
+      </div>
+      <div class="help">
+        <p>Radius: length of orbit in pixels</p>
+        <p>Steps: Number of points along orbit to visit</p>
+      </div>
+  </section>
     <canvas id="canvas"></canvas>
   </body>
-  <script src="./app.js"></script>
+  <script src="app.js"></script>
 </html>

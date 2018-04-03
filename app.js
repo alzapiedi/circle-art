@@ -1,14 +1,14 @@
-const CANVAS_WIDTH = 1200;
-const CANVAS_HEIGHT = 900;
-let F = 50;
-
+const CANVAS_SIZE = 1000;
 const canvas = document.getElementById('canvas');
-canvas.width = CANVAS_WIDTH;
-canvas.height = CANVAS_HEIGHT;
+canvas.width = CANVAS_SIZE;
+canvas.height = CANVAS_SIZE;
 const ctx = canvas.getContext('2d');
 
-let circles = [];
-const intervals = [];
+let isRunning = false;
+let circles = [
+  { x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 - (CANVAS_SIZE / 2.5), r: CANVAS_SIZE / 2.5, a: 0, v: Math.PI / 100 },
+  { x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 - (CANVAS_SIZE / 4), r: CANVAS_SIZE / 4, a: 0, v: Math.PI / 75 }
+];
 
 document.addEventListener('DOMContentLoaded', () => {
   setupForms();
@@ -19,12 +19,12 @@ function setupForms() {
   const r2 = document.getElementById('r2');
   const v1 = document.getElementById('v1');
   const v2 = document.getElementById('v2');
-  const f = document.getElementById('f');
-  r1.value = 400;
-  r2.value = 225;
-  v1.value = 260;
-  v2.value = 100;
-  f.value = 50;
+  const pixels = document.getElementById('pixels');
+  r1.value = circles[0].r;
+  r2.value = circles[1].r;
+  v1.value = 2*Math.round(Math.PI / circles[0].v);
+  v2.value = 2*Math.round(Math.PI / circles[1].v);
+  pixels.value = CANVAS_SIZE;
   r1.onchange = event => {
     stop();
     clear();
@@ -38,58 +38,65 @@ function setupForms() {
   v1.onchange = event => {
     stop();
     clear();
-    circles[0].v = Math.PI / Number(event.target.value);
+    circles[0].v = (Math.PI / (Number(event.target.value))) * 2;
   }
   v2.onchange = event => {
     stop();
     clear();
-    circles[1].v = Math.PI / Number(event.target.value);
+    circles[1].v = (Math.PI / (Number(event.target.value))) * 2;
   }
-  f.onchange = event => {
+  pixels.onchange = event => {
     stop();
     clear();
-    F = Number(event.target.value);
+    const size = Number(event.target.value) > 10000 ? 10000 : Math.abs(Math.round(Number(event.target.value)));
+    canvas.height = Number(size);
+    canvas.width = Number(size);
+    pixels.value = size;
   }
 }
 
+function resetCircles() {
+  circles.forEach(circle => {
+    circle.x = canvas.width / 2;
+    circle.y = canvas.height / 2 - circle.r;
+    circle.a = 0;
+  });
+}
+
 function clear() {
-  ctx.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT)
+  ctx.clearRect(0,0,CANVAS_SIZE,CANVAS_SIZE)
+  resetCircles();
+}
+
+function stop() {
+  isRunning = false;
 }
 
 function drawCircle(circle) {
   const { x, y } = circle;
   ctx.beginPath();
-  ctx.arc(x, y, 10, 0, 2 * Math.PI);
+  ctx.arc(x, y, 2, 0, 2 * Math.PI);
   ctx.fill();
 }
 
-function addCircle(circle) {
-  circle.x = CANVAS_WIDTH / 2;
-  circle.y = CANVAS_HEIGHT / 2 + circle.r;
-  circles.push(circle);
+function draw() {
+  if (!isRunning) return;
+  ctx.beginPath();
+  ctx.moveTo(circles[0].x, circles[0].y);
+  ctx.lineTo(circles[1].x, circles[1].y);
+  ctx.stroke();
+  circles.forEach(circle => {
+    circle.a = circle.a + circle.v;
+    circle.x = circle.r * Math.cos(circle.a - Math.PI / 2) + canvas.width / 2;
+    circle.y = circle.r * Math.sin(circle.a - Math.PI / 2) + canvas.height / 2;
+  });
+  requestAnimationFrame(draw);
 }
 
-function stop() {
-  intervals.forEach(clearInterval);
-}
-
-function start () {
-  if (circles.length === 0) [{ r: 400, a: 0, v: Math.PI / 260 }, { r: 225, a: 0, v: Math.PI / 100 }].forEach(addCircle);
-  intervals.push(setInterval(() => {
-    circles.forEach(circle => {
-      circle.a = circle.a + circle.v === Math.PI * 2 ? 0 : circle.a + circle.v;
-      circle.x = circle.r * Math.cos(circle.a) + CANVAS_WIDTH / 2;
-      circle.y = circle.r * Math.sin(circle.a) + CANVAS_HEIGHT / 2;
-    });
-
-  }, 1000/60));
-
-  intervals.push(setInterval(() => {
-    ctx.beginPath();
-    ctx.moveTo(circles[0].x, circles[0].y);
-    ctx.lineTo(circles[1].x, circles[1].y);
-    ctx.stroke();
-  }, 1000 / F));
+function start() {
+  if (isRunning) return;
+  isRunning = true;
+  requestAnimationFrame(draw);
 }
 
 start();
