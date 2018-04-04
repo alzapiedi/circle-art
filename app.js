@@ -100,8 +100,10 @@ function resetCircles() {
 }
 
 function clear() {
+  runs = 0;
   ctx.clearRect(0,0, canvas.width, canvas.height)
   resetCircles();
+  updateProgress();
 }
 
 function stop() {
@@ -116,12 +118,9 @@ function drawCircle(circle) {
 }
 
 function updateProgress() {
-  const runsPerOrbit = Math.max(angleToSteps(circles[0].v), angleToSteps(circles[1].v))
-  const orbitTarget = lcm / runsPerOrbit;
-  const orbitNumber = Math.ceil(runs / runsPerOrbit);
   const progress = Math.round(runs * 100 / lcm);
   document.getElementById('progress_inner').style.width = `${progress}%`;
-  document.getElementById('progress_text').innerHTML = `${orbitNumber} / ${orbitTarget}`;
+  document.getElementById('progress_text').innerHTML = `${runs} / ${lcm}`;
 }
 
 function draw() {
@@ -143,7 +142,6 @@ function draw() {
 
 function start() {
   if (isRunning) return;
-  runs = 0;
   isRunning = true;
   requestAnimationFrame(draw);
 }
