@@ -27,13 +27,21 @@
           <div class="input"><label>Steps</label><input id="v2" type="text"></input></div>
         </div>
       </div>
+      <div class="row">
+        <h2>Colors</h2>
+        <div class="input_group">
+          <div class="input"><label>Enable</label><input id="color" type="checkbox"></input></div>
+          <div class="input"><label>Cycles</label><input id="cycles" type="text" disabled></input></div>
+        </div>
+      </div>
       <div class="buttons">
         <button class="start" onclick="start()">Start</button>
         <button class="stop" onclick="stop()">Stop</button>
       </div>
       <div class="help">
-        <p>Radius: length of orbit in pixels</p>
+        <p>Radius: Length of orbit in pixels</p>
         <p>Steps: Number of points along orbit to visit</p>
+        <p>Cycles: Number of times to cycle through colors</p>
       </div>
       <div class="progress">
         <h3>Amount of steps to reach starting point</h3>
