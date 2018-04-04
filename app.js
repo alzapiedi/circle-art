@@ -1,18 +1,52 @@
 const CANVAS_SIZE = 1000;
+const STEPS_1 = 200;
+const STEPS_2 = 150;
+
 const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
 canvas.width = CANVAS_SIZE;
 canvas.height = CANVAS_SIZE;
-const ctx = canvas.getContext('2d');
 
+let lcm = getLcm(STEPS_1, STEPS_2);
+let runs = 0;
 let isRunning = false;
 let circles = [
-  { x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 - (CANVAS_SIZE / 2.5), r: CANVAS_SIZE / 2.5, a: 0, v: Math.PI / 100 },
-  { x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 - (CANVAS_SIZE / 4), r: CANVAS_SIZE / 4, a: 0, v: Math.PI / 75 }
+  { x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 - (CANVAS_SIZE / 2.5), r: CANVAS_SIZE / 2.5, a: 0, v: (2 * Math.PI / STEPS_1) },
+  { x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 - (CANVAS_SIZE / 4), r: CANVAS_SIZE / 4, a: 0, v: (2 * Math.PI / STEPS_2) }
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
   setupForms();
 });
+
+function angleToSteps(angle) {
+  return Math.round(2*Math.PI / angle);
+}
+
+function stepsToAngle(steps) {
+  return (Math.PI / (Number(steps))) * 2;
+}
+
+function getLcm(x, y) {
+   if ((typeof x !== 'number') || (typeof y !== 'number'))
+    return false;
+  return (!x || !y) ? 0 : Math.abs((x * y) / getGcd(x, y));
+}
+
+function getGcd(x, y) {
+  x = Math.abs(x);
+  y = Math.abs(y);
+  while(y) {
+    var t = y;
+    y = x % y;
+    x = t;
+  }
+  return x;
+}
+
+function updateLcm() {
+  lcm = getLcm(angleToSteps(circles[0].v), angleToSteps(circles[1].v));
+}
 
 function setupForms() {
   const r1 = document.getElementById('r1');
@@ -22,28 +56,30 @@ function setupForms() {
   const pixels = document.getElementById('pixels');
   r1.value = circles[0].r;
   r2.value = circles[1].r;
-  v1.value = 2*Math.round(Math.PI / circles[0].v);
-  v2.value = 2*Math.round(Math.PI / circles[1].v);
+  v1.value = angleToSteps(circles[0].v);
+  v2.value = angleToSteps(circles[1].v);
   pixels.value = CANVAS_SIZE;
   r1.onchange = event => {
+    circles[0].r = Number(event.target.value);
     stop();
     clear();
-    circles[0].r = Number(event.target.value);
   }
   r2.onchange = event => {
+    circles[1].r = Number(event.target.value);
     stop();
     clear();
-    circles[1].r = Number(event.target.value);
   }
   v1.onchange = event => {
+    circles[0].v = stepsToAngle(event.target.value);
+    updateLcm();
     stop();
     clear();
-    circles[0].v = (Math.PI / (Number(event.target.value))) * 2;
   }
   v2.onchange = event => {
+    circles[1].v = stepsToAngle(event.target.value);
+    updateLcm();
     stop();
     clear();
-    circles[1].v = (Math.PI / (Number(event.target.value))) * 2;
   }
   pixels.onchange = event => {
     stop();
@@ -64,7 +100,7 @@ function resetCircles() {
 }
 
 function clear() {
-  ctx.clearRect(0,0,CANVAS_SIZE,CANVAS_SIZE)
+  ctx.clearRect(0,0, canvas.width, canvas.height)
   resetCircles();
 }
 
@@ -79,8 +115,20 @@ function drawCircle(circle) {
   ctx.fill();
 }
 
+function updateProgress() {
+  const runsPerOrbit = Math.max(angleToSteps(circles[0].v), angleToSteps(circles[1].v))
+  const orbitTarget = lcm / runsPerOrbit;
+  const orbitNumber = Math.ceil(runs / runsPerOrbit);
+  const progress = Math.round(runs * 100 / lcm);
+  document.getElementById('progress_inner').style.width = `${progress}%`;
+  document.getElementById('progress_text').innerHTML = `${orbitNumber} / ${orbitTarget}`;
+}
+
 function draw() {
   if (!isRunning) return;
+  if (runs === lcm) return isRunning = false;
+  runs++;
+  updateProgress();
   ctx.beginPath();
   ctx.moveTo(circles[0].x, circles[0].y);
   ctx.lineTo(circles[1].x, circles[1].y);
@@ -95,6 +143,7 @@ function draw() {
 
 function start() {
   if (isRunning) return;
+  runs = 0;
   isRunning = true;
   requestAnimationFrame(draw);
 }
