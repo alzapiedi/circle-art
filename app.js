@@ -1,8 +1,12 @@
+// ------starting values --------------------
+
 const CANVAS_SIZE = 1000;
 const R_1 = 400;
 const R_2 = 250;
 const STEPS_1 = 200;
 const STEPS_2 = 150;
+
+// ----------helper class---------------------------
 
 class Circle {
   constructor(options) {
@@ -46,7 +50,7 @@ class Circle {
 
 Circle.keys = ['a', 'fb', 'fg', 'fr', 'p', 'pb', 'pg', 'pr', 'r', 'v', 'x', 'y'];
 
-// ------global variables------------------------------
+// ------global variables / app config------------------------
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -55,13 +59,12 @@ canvas.height = CANVAS_SIZE;
 canvas.style.width = `${CANVAS_SIZE}px`;
 canvas.style.height = `${CANVAS_SIZE}px`;
 
-let circles = [
-  new Circle({ x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 - R_1, r: R_1, a: 0, v: 2 * Math.PI / STEPS_1, p: 0, fr: 1, fg: 1, fb: 1, pr: 0, pg: 2, pb: 4 }),
-  new Circle({ x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 - R_2, r: R_2, a: 0, v: 2 * Math.PI / STEPS_2, p: 0, fr: 1, fg: 1, fb: 1, pr: 0, pg: 2, pb: 4 })
-];
-
 const app = {
   colors: [],
+  circles: [
+    new Circle({ x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 - R_1, r: R_1, a: 0, v: 2 * Math.PI / STEPS_1, p: 0, fr: 1, fg: 1, fb: 1, pr: 0, pg: 2, pb: 4 }),
+    new Circle({ x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 - R_2, r: R_2, a: 0, v: 2 * Math.PI / STEPS_2, p: 0, fr: 1, fg: 1, fb: 1, pr: 0, pg: 2, pb: 4 })
+  ],
   cycles: 1,
   fb: 1,
   fg: 1,
@@ -78,9 +81,10 @@ const app = {
   useGradient: false
 }
 
-// ----------------------------------------------------
+// ----------input handlers-----------------------------
 
 function setupForms() {
+  const { circles } = app;
   const r1 = document.getElementById('r1');
   const r2 = document.getElementById('r2');
   const v1 = document.getElementById('v1');
@@ -133,7 +137,7 @@ function setupForms() {
   pg.value = app.pg;
   pr.value = app.pr;
   pixels.value = CANVAS_SIZE;
-  ['f',1,2,3,4,5,6].forEach(n => {
+  ['b','d','f',1,2,3,4,5,6].forEach(n => {
     const color = `#${n}${n}${n}`;
     document.getElementById(`bg_color_${n}`).onclick = event => setBackground(color);
     document.getElementById(`line_color_${n}`).onclick = event => setLineColor(color);
@@ -167,80 +171,116 @@ function setupForms() {
   fb.onchange = event => {
     app.fb = Number(event.target.value);
     updateColors();
-    reset();
+    updateLines();
+    wipeCanvas();
+    restore();
   }
   fg.onchange = event => {
     app.fg = Number(event.target.value);
     updateColors();
-    reset();
+    updateLines();
+    wipeCanvas();
+    restore();
   }
   fr.onchange = event => {
     app.fr = Number(event.target.value);
     updateColors();
-    reset();
+    updateLines();
+    wipeCanvas();
+    restore();
   }
   o1fb.onchange = event => {
     circles[0].update({ fb: Number((event.target.value)) });
-    reset();
+    updateLines();
+    wipeCanvas();
+    restore();
   }
   o1fg.onchange = event => {
     circles[0].update({ fg: Number((event.target.value)) });
-    reset();
+    updateLines();
+    wipeCanvas();
+    restore();
   }
   o1fr.onchange = event => {
     circles[0].update({ fr: Number((event.target.value)) });
-    reset();
+    updateLines();
+    wipeCanvas();
+    restore();
   }
   o1pb.onchange = event => {
     circles[0].update({ pb: Number((event.target.value)) });
-    reset();
+    updateLines();
+    wipeCanvas();
+    restore();
   }
   o1pg.onchange = event => {
     circles[0].update({ pg: Number((event.target.value)) });
-    reset();
+    updateLines();
+    wipeCanvas();
+    restore();
   }
   o1pr.onchange = event => {
     circles[0].update({ pr: Number((event.target.value)) });
-    reset();
+    updateLines();
+    wipeCanvas();
+    restore();
   }
   o2fb.onchange = event => {
     circles[1].update({ fb: Number((event.target.value)) });
-    reset();
+    updateLines();
+    wipeCanvas();
+    restore();
   }
   o2fg.onchange = event => {
     circles[1].update({ fg: Number((event.target.value)) });
-    reset();
+    updateLines();
+    wipeCanvas();
+    restore();
   }
   o2fr.onchange = event => {
     circles[1].update({ fr: Number((event.target.value)) });
-    reset();
+    updateLines();
+    wipeCanvas();
+    restore();
   }
   o2pb.onchange = event => {
     circles[1].update({ pb: Number((event.target.value)) });
-    reset();
+    updateLines();
+    wipeCanvas();
+    restore();
   }
   o2pg.onchange = event => {
     circles[1].update({ pg: Number((event.target.value)) });
-    reset();
+    updateLines();
+    wipeCanvas();
+    restore();
   }
   o2pr.onchange = event => {
     circles[1].update({ pr: Number((event.target.value)) });
-    reset();
+    updateLines();
+    wipeCanvas();
+    restore();
   }
   pb.onchange = event => {
     app.pb = Number(event.target.value);
     updateColors();
-    reset();
+    updateLines();
+    wipeCanvas();
+    restore();
   }
   pg.onchange = event => {
     app.pg = Number(event.target.value);
     updateColors();
-    reset();
+    updateLines();
+    wipeCanvas();
+    restore();
   }
   pr.onchange = event => {
     app.pr = Number(event.target.value);
     updateColors();
-    reset();
+    updateLines();
+    wipeCanvas();
+    restore();
   }
   pixels.onchange = event => {
     reset();
@@ -329,11 +369,7 @@ function makeColorGradient(frequency1, frequency2, frequency3, phase1,phase2,pha
   return colors;
 }
 
-// ----------------------------------
-
-function resetCircles() {
-  circles.forEach(circle => circle.reset());
-}
+// --------app functions----------------------------------
 
 function clear() {
   app.runs = 0;
@@ -342,19 +378,6 @@ function clear() {
   resetCircles();
   updateColors();
   updateProgress();
-}
-
-function stop() {
-  app.isRunning = false;
-}
-
-function reset() {
-  stop();
-  clear();
-}
-
-function wipeCanvas() {
-  ctx.clearRect(0,0, canvas.width, canvas.height);
 }
 
 function disableColors() {
@@ -369,6 +392,15 @@ function disableGradient() {
   document.getElementById('gradient_options').style.display = 'none';
 }
 
+function reset() {
+  stop();
+  clear();
+}
+
+function resetCircles() {
+  app.circles.forEach(circle => circle.reset());
+}
+
 function setBackground(color) {
   canvas.style.background = color;
 }
@@ -376,18 +408,35 @@ function setBackground(color) {
 function setLineColor(color) {
   app.lineColor = color;
   disableColors();
+  disableGradient();
   wipeCanvas();
   restore(app.lineColor);
 }
 
-function updateColors() { //XXX
-  const { cycles, fb, fg, fr, pb, pg, pr } = app;
+function stop() {
+  app.isRunning = false;
+}
+
+function updateColors() {
+  const { circles, cycles, fb, fg, fr, pb, pg, pr } = app;
   const numColors = Math.max(circles[0].steps, circles[1].steps);
   app.colors = makeColorGradient(cycles * fr * (2*Math.PI / numColors), cycles * fg * (2*Math.PI / numColors), cycles * fb * (2*Math.PI / numColors), pr, pg, pb, undefined, undefined, numColors);
 }
 
 function updateLcm() {
+  const { circles } = app;
   app.lcm = getLcm(circles[0].steps, circles[1].steps);
+}
+
+function updateLines() {
+  const { circles, colors, lines } = app;
+  lines.forEach((line, i) => {
+    const gradient = ctx.createLinearGradient(line.x1, line.y1, line.x2, line.y2);
+    gradient.addColorStop(0, circles[0].getColor(i));
+    gradient.addColorStop(1, circles[1].getColor(i));
+    line.gradient = gradient;
+    line.color = colors[i % Math.max(circles[0].steps, circles[1].steps)];
+  });
 }
 
 function updateProgress() {
@@ -396,6 +445,12 @@ function updateProgress() {
   document.getElementById('progress_inner').style.width = `${progress}%`;
   document.getElementById('progress_text').innerHTML = `${runs} / ${lcm}`;
 }
+
+function wipeCanvas() {
+  ctx.clearRect(0,0, canvas.width, canvas.height);
+}
+
+// ----------- rendering methods ------------------------------
 
 function restore(color) {
   const { useGradient } = app;
@@ -409,20 +464,25 @@ function restore(color) {
 }
 
 function draw() {
-  const { colors, isRunning, lcm, lines, lineColor, runs, useColors, useGradient } = app;
+  const { circles, colors, isRunning, lcm, lines, lineColor, runs, useColors, useGradient } = app;
   if (!isRunning) return;
   if (runs === lcm) return app.isRunning = false;
+
   const color = colors[runs % Math.max(circles[0].steps, circles[1].steps)]
   const gradient = ctx.createLinearGradient(circles[0].x, circles[0].y, circles[1].x, circles[1].y);
   gradient.addColorStop(0, circles[0].getColor(runs));
   gradient.addColorStop(1, circles[1].getColor(runs));
+
   lines.push({ x1: circles[0].x, y1: circles[0].y, x2: circles[1].x, y2: circles[1].y, color, gradient });
+
   ctx.beginPath();
   ctx.moveTo(circles[0].x, circles[0].y);
   ctx.lineTo(circles[1].x, circles[1].y);
   ctx.strokeStyle = useGradient ? gradient : useColors ? color : lineColor;
   ctx.stroke();
+
   circles.forEach(circle => circle.step());
+
   app.runs++;
   updateProgress();
   requestAnimationFrame(draw);

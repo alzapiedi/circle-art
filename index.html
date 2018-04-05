@@ -103,6 +103,8 @@
           <font style="color:#444" id="line_color_4">█</font>
           <font style="color:#555" id="line_color_5">█</font>
           <font style="color:#666" id="line_color_6">█</font>
+          <font style="color:#bbb" id="line_color_b">█</font>
+          <font style="color:#ddd" id="line_color_d">█</font>
           <font style="color:#fff" id="line_color_f">█</font>
         </div>
       </div>
@@ -115,6 +117,8 @@
           <font style="color:#444" id="bg_color_4">█</font>
           <font style="color:#555" id="bg_color_5">█</font>
           <font style="color:#666" id="bg_color_6">█</font>
+          <font style="color:#bbb" id="bg_color_b">█</font>
+          <font style="color:#ddd" id="bg_color_d">█</font>
           <font style="color:#fff" id="bg_color_f">█</font>
         </div>
       </div>
@@ -122,10 +126,12 @@
         <button class="start" onclick="start()">Start</button>
         <button class="stop" onclick="stop()">Stop</button>
       </div>
+      <div class="buttons">
+        <button class="clear" onclick="reset()">Reset</button>
+      </div>
       <div class="help">
         <p>Radius: Length of orbit in pixels</p>
         <p>Steps: Number of points along orbit to visit</p>
-        <p>Cycles: Number of times to cycle through colors</p>
       </div>
       <div class="progress">
         <h3>Amount of steps to reach starting point</h3>
