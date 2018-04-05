@@ -23,6 +23,13 @@ canvas {
   border-top: 1px solid #eee;
 }
 
+font {
+  cursor: pointer;
+  display: flex;
+  font-size: 16px;
+  margin-right: 10px;
+}
+
 h2 {
   font-size: 20px;
   margin: 0;
@@ -48,12 +55,26 @@ p {
   font-size: 12px;
 }
 
+#bg_color_f, #line_color_f {
+  font-size: 14px;
+  border: 1px solid black;
+}
+
 .buttons {
   align-items: center;
   display: flex;
   justify-content: center;
   margin-top: 10px;
   padding: 5px;
+}
+
+.colors {
+  display: flex;
+  margin: 10px 0;
+}
+
+#color_options {
+  margin-top: 10px;
 }
 
 .controls {
