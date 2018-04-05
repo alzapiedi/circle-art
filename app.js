@@ -168,6 +168,7 @@ function resetCircles() {
 
 function clear() {
   runs = 0;
+  lines = [];
   wipeCanvas();
   resetCircles();
   updateColors();
