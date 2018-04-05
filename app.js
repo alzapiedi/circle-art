@@ -90,6 +90,18 @@ function setupForms() {
   const fr = document.getElementById('fr');
   const fg = document.getElementById('fg');
   const fb = document.getElementById('fb');
+  const o1fb = document.getElementById('o1fb');
+  const o1fg = document.getElementById('o1fg');
+  const o1fr = document.getElementById('o1fr');
+  const o1pb = document.getElementById('o1pb');
+  const o1pg = document.getElementById('o1pg');
+  const o1pr = document.getElementById('o1pr');
+  const o2fb = document.getElementById('o2fb');
+  const o2fg = document.getElementById('o2fg');
+  const o2fr = document.getElementById('o2fr');
+  const o2pb = document.getElementById('o2pb');
+  const o2pg = document.getElementById('o2pg');
+  const o2pr = document.getElementById('o2pr');
   const pr = document.getElementById('pr');
   const pg = document.getElementById('pg');
   const pb = document.getElementById('pb');
@@ -105,6 +117,18 @@ function setupForms() {
   fb.value = app.fb;
   fg.value = app.fg;
   fr.value = app.fr;
+  o1fb.value = circles[0].fb;
+  o1fg.value = circles[0].fg;
+  o1fr.value = circles[0].fr;
+  o1pb.value = circles[0].pb;
+  o1pg.value = circles[0].pg;
+  o1pr.value = circles[0].pr;
+  o2fb.value = circles[1].fb;
+  o2fg.value = circles[1].fg;
+  o2fr.value = circles[1].fr;
+  o2pb.value = circles[1].pb;
+  o2pg.value = circles[1].pg;
+  o2pr.value = circles[1].pr;
   pb.value = app.pb;
   pg.value = app.pg;
   pr.value = app.pr;
@@ -155,6 +179,54 @@ function setupForms() {
     updateColors();
     reset();
   }
+  o1fb.onchange = event => {
+    circles[0].update({ fb: Number((event.target.value)) });
+    reset();
+  }
+  o1fg.onchange = event => {
+    circles[0].update({ fg: Number((event.target.value)) });
+    reset();
+  }
+  o1fr.onchange = event => {
+    circles[0].update({ fr: Number((event.target.value)) });
+    reset();
+  }
+  o1pb.onchange = event => {
+    circles[0].update({ pb: Number((event.target.value)) });
+    reset();
+  }
+  o1pg.onchange = event => {
+    circles[0].update({ pg: Number((event.target.value)) });
+    reset();
+  }
+  o1pr.onchange = event => {
+    circles[0].update({ pr: Number((event.target.value)) });
+    reset();
+  }
+  o2fb.onchange = event => {
+    circles[1].update({ fb: Number((event.target.value)) });
+    reset();
+  }
+  o2fg.onchange = event => {
+    circles[1].update({ fg: Number((event.target.value)) });
+    reset();
+  }
+  o2fr.onchange = event => {
+    circles[1].update({ fr: Number((event.target.value)) });
+    reset();
+  }
+  o2pb.onchange = event => {
+    circles[1].update({ pb: Number((event.target.value)) });
+    reset();
+  }
+  o2pg.onchange = event => {
+    circles[1].update({ pg: Number((event.target.value)) });
+    reset();
+  }
+  o2pr.onchange = event => {
+    circles[1].update({ pr: Number((event.target.value)) });
+    reset();
+  }
   pb.onchange = event => {
     app.pb = Number(event.target.value);
     updateColors();
@@ -189,6 +261,7 @@ function setupForms() {
   gradient.onchange = event => {
     app.useGradient = event.target.checked;
     disableColors();
+    document.getElementById('gradient_options').style.display = app.useGradient ? 'flex' : 'none';
     wipeCanvas();
     restore(app.useGradient ? null : app.lineColor);
   }
