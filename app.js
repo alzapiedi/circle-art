@@ -24,8 +24,8 @@ class Circle {
   }
 
   reset() {
-    this.x = this.r * Math.cos(Math.PI / 2 + this.p) + canvas.width / 2;
-    this.y = this.r * -Math.sin(Math.PI / 2 + this.p) + canvas.height / 2;
+    this.x = this.r * Math.cos(-Math.PI / 2 + this.p) + canvas.width / 2;
+    this.y = this.r * Math.sin(-Math.PI / 2 + this.p) + canvas.height / 2;
     this.a = 0;
   }
 
@@ -152,11 +152,15 @@ function setupForms() {
   }
   p1.onchange = event => {
     circles[0].update({p: degToRad(Number(event.target.value))});
-    reset();
+    updateLines();
+    wipeCanvas();
+    restore();
   }
   p2.onchange = event => {
     circles[1].update({p: degToRad(Number(event.target.value))});
-    reset();
+    updateLines();
+    wipeCanvas();
+    restore();
   }
   v1.onchange = event => {
     circles[0].update({v: stepsToAngle(event.target.value)});
@@ -430,12 +434,19 @@ function updateLcm() {
 
 function updateLines() {
   const { circles, colors, lines } = app;
+  resetCircles();
   lines.forEach((line, i) => {
+    line.x1 = circles[0].x;
+    line.y1 = circles[0].y;
+    line.x2 = circles[1].x;
+    line.y2 = circles[1].y;
     const gradient = ctx.createLinearGradient(line.x1, line.y1, line.x2, line.y2);
     gradient.addColorStop(0, circles[0].getColor(i));
     gradient.addColorStop(1, circles[1].getColor(i));
     line.gradient = gradient;
     line.color = colors[i % Math.max(circles[0].steps, circles[1].steps)];
+    circles[0].step();
+    circles[1].step();
   });
 }
 
@@ -453,12 +464,12 @@ function wipeCanvas() {
 // ----------- rendering methods ------------------------------
 
 function restore(color) {
-  const { useGradient } = app;
+  const { lineColor, useColors, useGradient } = app;
   app.lines.forEach(line => {
     ctx.beginPath();
     ctx.moveTo(line.x1, line.y1);
     ctx.lineTo(line.x2, line.y2);
-    ctx.strokeStyle = color ? color : useGradient ? line.gradient : line.color;
+    ctx.strokeStyle = color ? color : useGradient ? line.gradient : useColors ? line.color : lineColor;
     ctx.stroke();
   });
 }
