@@ -5,8 +5,7 @@ const STEPS_2 = 150;
 
 class Circle {
   constructor(options) {
-    const keys = ['a', 'p', 'r', 'v', 'x', 'y'];
-    keys.forEach(key => this[key] = options[key]);
+    Circle.keys.forEach(key => this[key] = options[key]);
   }
 
   get steps() {
@@ -24,7 +23,15 @@ class Circle {
     this.x = this.r * Math.cos(this.a - Math.PI / 2 + this.p) + canvas.width / 2;
     this.y = this.r * Math.sin(this.a - Math.PI / 2 + this.p) + canvas.height / 2;
   }
+
+  update(options) {
+    Circle.keys.forEach(key => {
+      if (options[key] !== undefined) this[key] = options[key];
+    });
+  }
 }
+
+Circle.keys = ['a', 'p', 'r', 'v', 'x', 'y'];
 
 // --------------------------------------------------
 
