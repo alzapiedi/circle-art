@@ -109,7 +109,8 @@ function setupForms() {
     useColors = event.target.checked;
     colorCycles.disabled = !useColors;
     document.getElementById('color_options').style.display = useColors ? 'flex' : 'none';
-    reset();
+    wipeCanvas();
+    restore(useColors ? null : lineColor);
   }
   colorCycles.onchange = event => {
     cycles = Math.round(Number(event.target.value)) || 1;
@@ -252,8 +253,6 @@ function draw() {
   if (!isRunning) return;
   if (runs === lcm) return isRunning = false;
   color = colors[runs % Math.max(circles[0].steps, circles[1].steps)];
-  runs++;
-  updateProgress();
   ctx.beginPath();
   lines.push({ x1: circles[0].x, y1: circles[0].y, x2: circles[1].x, y2: circles[1].y, color });
   ctx.moveTo(circles[0].x, circles[0].y);
@@ -262,6 +261,8 @@ function draw() {
   ctx.stroke();
   circles.forEach(circle => circle.step());
   requestAnimationFrame(draw);
+  runs++;
+  updateProgress();
 }
 
 function start() {
