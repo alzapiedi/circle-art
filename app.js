@@ -249,7 +249,7 @@ function restore(color) {
 
 function draw() {
   if (!isRunning) return;
-  if (runs > lcm) return isRunning = false;
+  if (runs === lcm) return isRunning = false;
   color = colors[runs % Math.max(circles[0].steps, circles[1].steps)];
   runs++;
   updateProgress();
