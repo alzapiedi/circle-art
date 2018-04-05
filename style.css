@@ -94,6 +94,7 @@ p {
 .controls {
   border: 1px solid #eee;
   max-width: 270px;
+  min-width: 270px;
   overflow: hidden;
 }
 

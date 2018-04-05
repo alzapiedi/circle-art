@@ -142,144 +142,144 @@ function setupForms() {
     document.getElementById(`bg_color_${n}`).onclick = event => setBackground(color);
     document.getElementById(`line_color_${n}`).onclick = event => setLineColor(color);
   });
-  r1.onchange = event => {
+  r1.oninput = event => {
     circles[0].update({r: Number(event.target.value)});
     reset();
   }
-  r2.onchange = event => {
+  r2.oninput = event => {
     circles[1].update({r: Number(event.target.value)});
     reset();
   }
-  p1.onchange = event => {
+  p1.oninput = event => {
     circles[0].update({p: degToRad(Number(event.target.value))});
     updateLines();
     wipeCanvas();
     restore();
   }
-  p2.onchange = event => {
+  p2.oninput = event => {
     circles[1].update({p: degToRad(Number(event.target.value))});
     updateLines();
     wipeCanvas();
     restore();
   }
-  v1.onchange = event => {
+  v1.oninput = event => {
     circles[0].update({v: stepsToAngle(event.target.value)});
     updateLcm();
     reset();
   }
-  v2.onchange = event => {
+  v2.oninput = event => {
     circles[1].update({v: stepsToAngle(event.target.value)});
     updateLcm();
     reset();
   }
-  fb.onchange = event => {
+  fb.oninput = event => {
     app.fb = Number(event.target.value);
     updateColors();
     updateLines();
     wipeCanvas();
     restore();
   }
-  fg.onchange = event => {
+  fg.oninput = event => {
     app.fg = Number(event.target.value);
     updateColors();
     updateLines();
     wipeCanvas();
     restore();
   }
-  fr.onchange = event => {
+  fr.oninput = event => {
     app.fr = Number(event.target.value);
     updateColors();
     updateLines();
     wipeCanvas();
     restore();
   }
-  o1fb.onchange = event => {
+  o1fb.oninput = event => {
     circles[0].update({ fb: Number((event.target.value)) });
     updateLines();
     wipeCanvas();
     restore();
   }
-  o1fg.onchange = event => {
+  o1fg.oninput = event => {
     circles[0].update({ fg: Number((event.target.value)) });
     updateLines();
     wipeCanvas();
     restore();
   }
-  o1fr.onchange = event => {
+  o1fr.oninput = event => {
     circles[0].update({ fr: Number((event.target.value)) });
     updateLines();
     wipeCanvas();
     restore();
   }
-  o1pb.onchange = event => {
+  o1pb.oninput = event => {
     circles[0].update({ pb: Number((event.target.value)) });
     updateLines();
     wipeCanvas();
     restore();
   }
-  o1pg.onchange = event => {
+  o1pg.oninput = event => {
     circles[0].update({ pg: Number((event.target.value)) });
     updateLines();
     wipeCanvas();
     restore();
   }
-  o1pr.onchange = event => {
+  o1pr.oninput = event => {
     circles[0].update({ pr: Number((event.target.value)) });
     updateLines();
     wipeCanvas();
     restore();
   }
-  o2fb.onchange = event => {
+  o2fb.oninput = event => {
     circles[1].update({ fb: Number((event.target.value)) });
     updateLines();
     wipeCanvas();
     restore();
   }
-  o2fg.onchange = event => {
+  o2fg.oninput = event => {
     circles[1].update({ fg: Number((event.target.value)) });
     updateLines();
     wipeCanvas();
     restore();
   }
-  o2fr.onchange = event => {
+  o2fr.oninput = event => {
     circles[1].update({ fr: Number((event.target.value)) });
     updateLines();
     wipeCanvas();
     restore();
   }
-  o2pb.onchange = event => {
+  o2pb.oninput = event => {
     circles[1].update({ pb: Number((event.target.value)) });
     updateLines();
     wipeCanvas();
     restore();
   }
-  o2pg.onchange = event => {
+  o2pg.oninput = event => {
     circles[1].update({ pg: Number((event.target.value)) });
     updateLines();
     wipeCanvas();
     restore();
   }
-  o2pr.onchange = event => {
+  o2pr.oninput = event => {
     circles[1].update({ pr: Number((event.target.value)) });
     updateLines();
     wipeCanvas();
     restore();
   }
-  pb.onchange = event => {
+  pb.oninput = event => {
     app.pb = Number(event.target.value);
     updateColors();
     updateLines();
     wipeCanvas();
     restore();
   }
-  pg.onchange = event => {
+  pg.oninput = event => {
     app.pg = Number(event.target.value);
     updateColors();
     updateLines();
     wipeCanvas();
     restore();
   }
-  pr.onchange = event => {
+  pr.oninput = event => {
     app.pr = Number(event.target.value);
     updateColors();
     updateLines();
