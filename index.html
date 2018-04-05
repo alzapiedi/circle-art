@@ -34,12 +34,31 @@
         </div>
       </div>
       <div class="row">
-        <h2>Colors</h2>
-        <div class="input_group">
-          <div class="input"><label>Enable</label><input id="color" type="checkbox"></input></div>
-          <div class="input"><label>Cycles</label><input id="cycles" type="text" disabled></input></div>
+        <h2>Colors <input id="color" type="checkbox"></input></h2>
+        <div id="color_options" class="subrow" style="display:none">
+          <h2>Red</h2>
+          <div class="input_group">
+            <div class="input"><label>F</label><input id="fr" type="text"></input></div>
+            <div class="input"><label>Phase</label><input id="pr" type="text"></input></div>
+          </div>
+          <h2>Green</h2>
+          <div class="input_group">
+            <div class="input"><label>F</label><input id="fg" type="text"></input></div>
+            <div class="input"><label>Phase</label><input id="pg" type="text"></input></div>
+          </div>
+          <h2>Blue</h2>
+          <div class="input_group">
+            <div class="input"><label>F</label><input id="fb" type="text"></input></div>
+            <div class="input"><label>Phase</label><input id="pb" type="text"></input></div>
+          </div>
         </div>
-        <div id="color_options" class="input_group" style="display:none">
+      </div>
+      <div class="row">
+        <h2>Gradient</h2>
+        <div class="input_group">
+          <div class="input"><label>Enable</label><input id="gradient" type="checkbox"></input></div>
+        </div>
+        <div id="gradient_options" class="input_group" style="display:none">
         </div>
       </div>
       <div class="row">
