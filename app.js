@@ -3,8 +3,10 @@
 const CANVAS_SIZE = 1000;
 const R_1 = 400;
 const R_2 = 250;
+const R_3 = 180;
 const STEPS_1 = 200;
 const STEPS_2 = 150;
+const STEPS_3 = 75;
 
 // ----------helper class---------------------------
 
@@ -63,7 +65,8 @@ const app = {
   colors: [],
   circles: [
     new Circle({ x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 - R_1, r: R_1, a: 0, v: 2 * Math.PI / STEPS_1, p: 0, fr: 1, fg: 1, fb: 1, pr: 0, pg: 2, pb: 4 }),
-    new Circle({ x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 - R_2, r: R_2, a: 0, v: 2 * Math.PI / STEPS_2, p: 0, fr: 1, fg: 1, fb: 1, pr: 0, pg: 2, pb: 4 })
+    new Circle({ x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 - R_2, r: R_2, a: 0, v: 2 * Math.PI / STEPS_2, p: 0, fr: 1, fg: 1, fb: 1, pr: 0, pg: 2, pb: 4 }),
+    new Circle({ x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 - R_3, r: R_3, a: 0, v: 2 * Math.PI / STEPS_3, p: 0, fr: 1, fg: 1, fb: 1, pr: 0, pg: 2, pb: 4 })
   ],
   cycles: 1,
   fb: 1,
@@ -77,6 +80,7 @@ const app = {
   lineColor: '#000',
   lines: [],
   runs: 0,
+  speed: 2,
   useColors: false,
   useGradient: false
 }
@@ -112,6 +116,7 @@ function setupForms() {
   const pixels = document.getElementById('pixels');
   const color = document.getElementById('color');
   const gradient = document.getElementById('gradient');
+  const speed = document.getElementById('speed');
   r1.value = circles[0].r;
   r2.value = circles[1].r;
   v1.value = angleToSteps(circles[0].v);
@@ -309,6 +314,10 @@ function setupForms() {
     wipeCanvas();
     restore(app.useGradient ? null : app.lineColor);
   }
+  speed.oninput = event => {
+    const value = Number(event.target.value);
+    app.speed = Number.isFinite(value) ? value : 1;
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -474,36 +483,44 @@ function restore(color) {
   });
 }
 
-function draw() {
+function draw(i) {
   const { circles, colors, isRunning, lcm, lines, lineColor, runs, useColors, useGradient } = app;
   if (!isRunning) return;
   if (runs === lcm) return app.isRunning = false;
 
-  const color = colors[runs % Math.max(circles[0].steps, circles[1].steps)]
-  const gradient = ctx.createLinearGradient(circles[0].x, circles[0].y, circles[1].x, circles[1].y);
-  gradient.addColorStop(0, circles[0].getColor(runs));
-  gradient.addColorStop(1, circles[1].getColor(runs));
+  for (let n = 0; n < circles.length; n++) {
+    for (let m = n + 1; m < circles.length; m++) {
+      const color = colors[runs % Math.max(circles[n].steps, circles[m].steps)]
+      const gradient = ctx.createLinearGradient(circles[n].x, circles[n].y, circles[m].x, circles[m].y);
+      gradient.addColorStop(0, circles[n].getColor(runs));
+      gradient.addColorStop(1, circles[m].getColor(runs));
 
-  lines.push({ x1: circles[0].x, y1: circles[0].y, x2: circles[1].x, y2: circles[1].y, color, gradient });
+      lines.push({ x1: circles[n].x, y1: circles[m].y, x2: circles[n].x, y2: circles[m].y, color, gradient });
 
-  ctx.beginPath();
-  ctx.moveTo(circles[0].x, circles[0].y);
-  ctx.lineTo(circles[1].x, circles[1].y);
-  ctx.strokeStyle = useGradient ? gradient : useColors ? color : lineColor;
-  ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(circles[n].x, circles[n].y);
+      ctx.lineTo(circles[m].x, circles[m].y);
+      ctx.strokeStyle = useGradient ? gradient : useColors ? color : lineColor;
+      ctx.stroke();
+    }
+  }
 
   circles.forEach(circle => circle.step());
 
   app.runs++;
   updateProgress();
-  requestAnimationFrame(draw);
+  if (i === app.speed - 1) requestAnimationFrame(run);
 }
 
 function start() {
   if (app.isRunning) return;
   app.isRunning = true;
   updateColors();
-  requestAnimationFrame(draw);
+  requestAnimationFrame(run);
+}
+
+function run() {
+  for (var i = 0; i < app.speed; i++) draw(i);
 }
 
 start();
