@@ -29,6 +29,7 @@ export default class App extends Component {
   }
 
   render() {
+    window.app = this;
     return (
       <section className="controls">
         <div className="row">
@@ -47,27 +48,27 @@ export default class App extends Component {
         <div id="extra_orbits"></div>
         <button id="add_orbit">Add Orbit</button>
         <div className="row">
-          <h2>Colors <input id="color" type="checkbox" /></h2>
+          <h2>Colors <input id="color" onChange={this.handleToggleColors} type="checkbox" /></h2>
           <div id="color_options" className="subrow" style={{ display: 'none' }}>
             <h2>Red</h2>
             <div className="input_group">
-              <div className="input"><label>F</label><input id="fr" type="text" /></div>
-              <div className="input"><label>Phase</label><input id="pr" type="text" /></div>
+              <div className="input"><label>F</label><input onChange={this.handleChangeColorProperty.bind(this, 'fr')} value={this.state.fr} type="text" /></div>
+              <div className="input"><label>Phase</label><input onChange={this.handleChangeColorProperty.bind(this, 'pr')} value={this.state.pr} type="text" /></div>
             </div>
             <h2>Green</h2>
             <div className="input_group">
-              <div className="input"><label>F</label><input id="fg" type="text" /></div>
-              <div className="input"><label>Phase</label><input id="pg" type="text" /></div>
+              <div className="input"><label>F</label><input onChange={this.handleChangeColorProperty.bind(this, 'fg')} value={this.state.fg} type="text" /></div>
+              <div className="input"><label>Phase</label><input onChange={this.handleChangeColorProperty.bind(this, 'pg')} value={this.state.pg} type="text" /></div>
             </div>
             <h2>Blue</h2>
             <div className="input_group">
-              <div className="input"><label>F</label><input id="fb" type="text" /></div>
-              <div className="input"><label>Phase</label><input id="pb" type="text" /></div>
+              <div className="input"><label>F</label><input onChange={this.handleChangeColorProperty.bind(this, 'fb')} value={this.state.fb} type="text" /></div>
+              <div className="input"><label>Phase</label><input onChange={this.handleChangeColorProperty.bind(this, 'pb')} value={this.state.pb} type="text" /></div>
             </div>
           </div>
         </div>
         <div className="row">
-          <h2>Gradient <input id="gradient" type="checkbox" /></h2>
+          <h2>Gradient <input id="gradient" onChange={this.handleToggleGradient} type="checkbox" /></h2>
           <div id="gradient_options" className="subrow" style={{ display: 'none' }}>
             <h2>Orbit 1</h2>
             <div className="subrow">
@@ -161,13 +162,25 @@ export default class App extends Component {
     this.start();
   }
 
+  disableColors() {
+    this.setState({ useColors: false });
+    document.getElementById('color').checked = false;
+    document.getElementById('color_options').style.display = 'none';
+  }
+
+  disableGradient() {
+    this.setState({ useGradient: false });
+    document.getElementById('gradient').checked = false;
+    document.getElementById('gradient_options').style.display = 'none';
+  }
+
   renderOrbitProperties = (circle, i) => {
     return (
       <div className="row" key={i}>
         <h2>Orbit {i + 1}</h2>
         <div className="input_group">
           <div className="input"><label>Radius</label><input value={circle.r} onChange={this.updateCircle.bind(this, circle, 'r')} type="text" /></div>
-          <div className="input"><label>Steps</label><input value={circle.steps} onChange={this.updateCircle.bind(this, circle, 'v')} type="text" /></div>
+          <div className="input"><label>Steps</label><input value={circle.steps} onChange={this.updateCircle.bind(this, circle, 'steps')} type="text" /></div>
         </div>
         <div className="input_group">
           <div className="input"><label>Phase Shift (deg CW)</label><input value={circle.p} onChange={this.updateCircle.bind(this, circle, i, 'p')} type="text" /></div>
@@ -185,9 +198,38 @@ export default class App extends Component {
     this.props.ctx.canvas.style.width = `${Number(size)}px`;
   }
 
+  handleChangeColorProperty(property, event) {
+    this.setState({ [property]: Number(event.target.value) }, () => {
+      this.updateColors();
+      this.updateLines();
+      this.wipeCanvas();
+      this.restore();
+    });
+  }
+
   handleChangeSpeed = event => {
     const value = Number(event.target.value);
     this.setState({ speed: Number.isFinite(value) ? value : 1 });
+  }
+
+  handleToggleColors = event => {
+    const useColors = event.target.checked;
+    this.setState({ useColors }, () => {
+      this.disableGradient();
+      document.getElementById('color_options').style.display = useColors ? 'flex' : 'none';
+      this.wipeCanvas();
+      this.restore(useColors ? null : this.state.lineColor);
+    });
+  }
+
+  handleToggleGradient = event => {
+    const useGradient = event.target.checked;
+    this.setState({ useGradient }, () => {
+      this.disableColors();
+      document.getElementById('gradient_options').style.display = useGradient ? 'flex' : 'none';
+      this.wipeCanvas();
+      this.restore(useGradient ? null : this.state.lineColor);
+    });
   }
 
   reset = () => {
@@ -207,7 +249,7 @@ export default class App extends Component {
     this.updateProgress();
   }
 
-  draw(i) {
+  draw = i => {
     const { ctx } = this.props;
     const { circles, colors, isRunning, lcm, lines, lineColor, runs, speed, useColors, useGradient } = this.state;
     if (!isRunning) return;
@@ -220,7 +262,7 @@ export default class App extends Component {
         gradient.addColorStop(0, circles[n].getColor(runs));
         gradient.addColorStop(1, circles[m].getColor(runs));
 
-        lines.push({ x1: circles[n].x, y1: circles[n].y, x2: circles[m].x, y2: circles[m].y, color, gradient });
+        lines.push({ x1: circles[n].x, y1: circles[n].y, x2: circles[m].x, y2: circles[m].y, circle1: n, circle2: m, color, gradient });
 
         ctx.beginPath();
         ctx.moveTo(circles[n].x, circles[n].y);
@@ -241,11 +283,24 @@ export default class App extends Component {
     this.state.circles.forEach(circle => circle.reset());
   }
 
+  restore(color) {
+    const { ctx } = this.props;
+    const { lines, lineColor, useColors, useGradient } = this.state;
+    lines.forEach(line => {
+      ctx.beginPath();
+      ctx.moveTo(line.x1, line.y1);
+      ctx.lineTo(line.x2, line.y2);
+      ctx.strokeStyle = color ? color : useGradient ? line.gradient : useColors ? line.color : lineColor;
+      ctx.stroke();
+    });
+  }
+
+
   run = () => {
     for (var i = 0; i < this.state.speed; i++) this.draw(i);
   }
 
-  start() {
+  start = () => {
     if (this.state.isRunning) return;
     this.setState({ isRunning: true });
     this.updateColors();
@@ -254,13 +309,40 @@ export default class App extends Component {
 
   updateColors() {
     const { circles, cycles, fb, fg, fr, pb, pg, pr } = this.state;
-    const numColors = Math.max(this.state.circles.map(c => c.steps));
-    this.setState({ colors: makeColorGradient(cycles * fr * (2*Math.PI / numColors), cycles * fg * (2*Math.PI / numColors), cycles * fb * (2*Math.PI / numColors), pr, pg, pb, undefined, undefined, numColors) });
+    const numColors = Math.max(...this.state.circles.map(c => c.steps));
+    const colors = makeColorGradient(cycles * fr * (2*Math.PI / numColors), cycles * fg * (2*Math.PI / numColors), cycles * fb * (2*Math.PI / numColors), pr, pg, pb, undefined, undefined, numColors);
+    this.setState({ colors });
   }
 
   updateCircle(circle, key, event) {
     const value = Number(event.target.value);
-    circle.update({ [key]: value});
+    debugger;
+    circle.update({ [key]: value });
+    this.updateLcm();
+    this.reset();
+  }
+
+  updateLcm() {
+    this.setState({ lcm: getLcm(this.state.circles.map(c => c.steps)) });
+  }
+
+  updateLines() {
+    const { ctx } = this.props;
+    const { circles, colors, lines } = this.state;
+    this.resetCircles();
+    lines.forEach((line, i) => {
+      line.x1 = circles[line.circle1].x;
+      line.y1 = circles[line.circle1].y;
+      line.x2 = circles[line.circle2].x;
+      line.y2 = circles[line.circle2].y;
+      const gradient = ctx.createLinearGradient(line.x1, line.y1, line.x2, line.y2);
+      gradient.addColorStop(0, circles[line.circle1].getColor(i));
+      gradient.addColorStop(1, circles[line.circle2].getColor(i));
+      line.gradient = gradient;
+      line.color = colors[i % Math.max(circles[line.circle1].steps, circles[line.circle2].steps)];
+      circles[line.circle1].step();
+      circles[line.circle2].step();
+    });
   }
 
   updateProgress() {

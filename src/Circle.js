@@ -30,7 +30,7 @@ export default class Circle {
   }
 
   update(options) {
-    if (options.steps) this[v] = stepsToAngle(options.step);
+    if (options.steps) this.v = stepsToAngle(options.steps);
     Circle.keys.forEach(key => {
       if (options[key] !== undefined) this[key] = options[key];
     });
