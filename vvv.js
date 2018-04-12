@@ -1,56 +1,10 @@
 // ------starting values --------------------
 
-const CANVAS_SIZE = 1000;
-const R_1 = 400;
-const R_2 = 250;
-const R_3 = 180;
-const STEPS_1 = 200;
-const STEPS_2 = 150;
-const STEPS_3 = 75;
-
-// ----------helper class---------------------------
-
-class Circle {
-  constructor(options) {
-    Circle.keys.forEach(key => this[key] = options[key]);
-
-    this.colors = this._getColorGradient();
-  }
-
-  get steps() {
-    return angleToSteps(this.v);
-  }
-
-  getColor(run) {
-    return this.colors[run % this.steps];
-  }
-
-  reset() {
-    this.x = this.r * Math.cos(-Math.PI / 2 + this.p) + canvas.width / 2;
-    this.y = this.r * Math.sin(-Math.PI / 2 + this.p) + canvas.height / 2;
-    this.a = 0;
-  }
-
-  step() {
-    this.a = this.a + this.v;
-    this.x = this.r * Math.cos(this.a - Math.PI / 2 + this.p) + canvas.width / 2;
-    this.y = this.r * Math.sin(this.a - Math.PI / 2 + this.p) + canvas.height / 2;
-  }
-
-  update(options) {
-    Circle.keys.forEach(key => {
-      if (options[key] !== undefined) this[key] = options[key];
-    });
-    this.colors = this._getColorGradient();
-  }
-
-  _getColorGradient() {
-    const steps = this.steps;
-    return makeColorGradient(this.fr*2*Math.PI/steps, this.fg*2*Math.PI/steps, this.fb*2*Math.PI/steps, this.pr, this.pg, this.pb, undefined, undefined, steps);
-  }
-}
-
-Circle.keys = ['a', 'fb', 'fg', 'fr', 'p', 'pb', 'pg', 'pr', 'r', 'v', 'x', 'y'];
+const CANVAS_SIZE = 2000;
+const R_1 = 850;
+const R_2 = 600;
+const STEPS_1 = 50;
+const STEPS_2 = 80;
 
 // ------global variables / app config------------------------
 
@@ -65,8 +19,7 @@ const app = {
   colors: [],
   circles: [
     new Circle({ x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 - R_1, r: R_1, a: 0, v: 2 * Math.PI / STEPS_1, p: 0, fr: 1, fg: 1, fb: 1, pr: 0, pg: 2, pb: 4 }),
-    new Circle({ x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 - R_2, r: R_2, a: 0, v: 2 * Math.PI / STEPS_2, p: 0, fr: 1, fg: 1, fb: 1, pr: 0, pg: 2, pb: 4 }),
-    new Circle({ x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 - R_3, r: R_3, a: 0, v: 2 * Math.PI / STEPS_3, p: 0, fr: 1, fg: 1, fb: 1, pr: 0, pg: 2, pb: 4 })
+    new Circle({ x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 - R_2, r: R_2, a: 0, v: 2 * Math.PI / STEPS_2, p: 0, fr: 1, fg: 1, fb: 1, pr: 0, pg: 2, pb: 4 })
   ],
   cycles: 1,
   fb: 1,
@@ -76,11 +29,11 @@ const app = {
   pg: 2,
   pr: 0,
   isRunning: false,
-  lcm: getLcm(STEPS_1, STEPS_2),
+  lcm: getLcm([STEPS_1, STEPS_2]),
   lineColor: '#000',
   lines: [],
   runs: 0,
-  speed: 2,
+  speed: 1,
   useColors: false,
   useGradient: false
 }
@@ -142,6 +95,7 @@ function setupForms() {
   pg.value = app.pg;
   pr.value = app.pr;
   pixels.value = CANVAS_SIZE;
+  speed.value = app.speed;
   ['b','d','f',1,2,3,4,5,6].forEach(n => {
     const color = `#${n}${n}${n}`;
     document.getElementById(`bg_color_${n}`).onclick = event => setBackground(color);
@@ -338,7 +292,15 @@ function stepsToAngle(steps) {
   return (Math.PI / (Number(steps))) * 2;
 }
 
-function getLcm(x, y) {
+function getLcm(numbers) {
+  let lcm = 1;
+  for (let i = 0; i < numbers.length - 1; i++) {
+    lcm = _getLcm(lcm, _getLcm(numbers[i], numbers[i+1]));
+  }
+  return lcm;
+}
+
+function _getLcm(x, y) {
    if ((typeof x !== 'number') || (typeof y !== 'number'))
     return false;
   return (!x || !y) ? 0 : Math.abs((x * y) / getGcd(x, y));
@@ -355,34 +317,14 @@ function getGcd(x, y) {
   return x;
 }
 
-function byte2Hex(n) {
-  var nybHexString = "0123456789ABCDEF";
-  return String(nybHexString.substr((n >> 4) & 0x0F,1)) + nybHexString.substr(n & 0x0F,1);
-}
-
-function RGB2Color(r,g,b) {
-  return '#' + byte2Hex(r) + byte2Hex(g) + byte2Hex(b);
-}
-
-function makeColorGradient(frequency1, frequency2, frequency3, phase1,phase2,phase3,center,width,len) {
-  const colors = [];
-  if (len == undefined)
-    len = 50;
-  if (center == undefined)
-    center = 128;
-  if (width == undefined)
-    width = 127;
-  for (var i = 0; i < len; ++i)
-  {
-     var red = Math.sin(frequency1*i + phase1) * width + center;
-     var grn = Math.sin(frequency2*i + phase2) * width + center;
-     var blu = Math.sin(frequency3*i + phase3) * width + center;
-     colors.push(RGB2Color(red, grn, blu));
-  }
-  return colors;
-}
-
 // --------app functions----------------------------------
+
+function addOrbit() {
+  const R = Math.round(CANVAS_SIZE * 0.2);
+  const steps = app.circles.map(c => c.steps).sort();
+  const s = Math.round((steps[steps.length - 1] - steps[0]) / 2);
+  app.circles.push(new Circle({ x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 - R, r: R, a: 0, v: 2 * Math.PI / s, p: 0, fr: 1, fg: 1, fb: 1, pr: 0, pg: 2, pb: 4 }))
+}
 
 function clear() {
   app.runs = 0;
@@ -438,7 +380,7 @@ function updateColors() {
 
 function updateLcm() {
   const { circles } = app;
-  app.lcm = getLcm(circles[0].steps, circles[1].steps);
+  app.lcm = getLcm(circles.map(c => c.steps));
 }
 
 function updateLines() {
@@ -495,7 +437,7 @@ function draw(i) {
       gradient.addColorStop(0, circles[n].getColor(runs));
       gradient.addColorStop(1, circles[m].getColor(runs));
 
-      lines.push({ x1: circles[n].x, y1: circles[m].y, x2: circles[n].x, y2: circles[m].y, color, gradient });
+      lines.push({ x1: circles[n].x, y1: circles[n].y, x2: circles[m].x, y2: circles[m].y, color, gradient });
 
       ctx.beginPath();
       ctx.moveTo(circles[n].x, circles[n].y);
