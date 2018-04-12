@@ -21,6 +21,7 @@ export default class Circle {
     this.x = this.r * Math.cos(-Math.PI / 2 + this.p) + canvas.width / 2;
     this.y = this.r * Math.sin(-Math.PI / 2 + this.p) + canvas.height / 2;
     this.a = 0;
+    return this;
   }
 
   step() {
@@ -30,10 +31,10 @@ export default class Circle {
   }
 
   update(options) {
-    if (options.steps) this.v = stepsToAngle(options.steps);
     Circle.keys.forEach(key => {
       if (options[key] !== undefined) this[key] = options[key];
     });
+    if (Number.isFinite(options.steps)) this.v = stepsToAngle(options.steps);
     this.colors = this._getColorGradient();
   }
 
