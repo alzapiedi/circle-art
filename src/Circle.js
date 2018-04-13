@@ -6,7 +6,7 @@ export default class Circle {
   constructor(options) {
     Circle.keys.forEach(key => this[key] = options[key]);
 
-    this.colors = this._getColorGradient();
+    this.colors = this.getColorGradient();
   }
 
   get steps() {
@@ -15,6 +15,11 @@ export default class Circle {
 
   getColor(run) {
     return this.colors[run % this.steps];
+  }
+  
+  getColorGradient() {
+    const steps = this.steps;
+    return makeColorGradient(this.fr*2*Math.PI/steps, this.fg*2*Math.PI/steps, this.fb*2*Math.PI/steps, this.pr, this.pg, this.pb, undefined, undefined, steps);
   }
 
   reset() {
@@ -35,11 +40,6 @@ export default class Circle {
       if (options[key] !== undefined) this[key] = options[key];
     });
     if (Number.isFinite(options.steps)) this.v = stepsToAngle(options.steps);
-    this.colors = this._getColorGradient();
-  }
-
-  _getColorGradient() {
-    const steps = this.steps;
-    return makeColorGradient(this.fr*2*Math.PI/steps, this.fg*2*Math.PI/steps, this.fb*2*Math.PI/steps, this.pr, this.pg, this.pb, undefined, undefined, steps);
+    this.colors = this.getColorGradient();
   }
 }
