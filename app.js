@@ -355,7 +355,7 @@ eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\n
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\nvar CANVAS_SIZE = exports.CANVAS_SIZE = 2000;\nvar R_1 = exports.R_1 = 850;\nvar R_2 = exports.R_2 = 600;\nvar STEPS_1 = exports.STEPS_1 = 130;\nvar STEPS_2 = exports.STEPS_2 = 25;\n\nexports.default = {\n  CANVAS_SIZE: CANVAS_SIZE,\n  R_1: R_1,\n  R_2: R_2,\n  STEPS_1: STEPS_1,\n  STEPS_2: STEPS_2\n};\n\n//# sourceURL=webpack:///./src/defaults.js?");
+eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\nvar CANVAS_SIZE = exports.CANVAS_SIZE = 2000;\nvar R_1 = exports.R_1 = 850;\nvar R_2 = exports.R_2 = 600;\nvar STEPS_1 = exports.STEPS_1 = 182;\nvar STEPS_2 = exports.STEPS_2 = 112;\n\nexports.default = {\n  CANVAS_SIZE: CANVAS_SIZE,\n  R_1: R_1,\n  R_2: R_2,\n  STEPS_1: STEPS_1,\n  STEPS_2: STEPS_2\n};\n\n//# sourceURL=webpack:///./src/defaults.js?");
 
 /***/ }),
 
